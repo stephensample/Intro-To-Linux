@@ -679,9 +679,13 @@ Unlike Windows, where every file has an extension identifying its type, most fil
 
 **Tar**
 
-Tar is main UNIX archive utility that will allow you to store many files and directories into a single file, while optionally compressing them in the process. Compression methods include gz (GZip), bz2 (BZip2), or xz.
+Tar is the most common UNIX archive utility. It was originally developed to allow files to be written to backup tapes (tar stands for **t**ape **ar**chiver), but you can save tar files (tarballs) anywhere. Tar allows you to store many files and directories in a single archive file, and preserves ownership, permissions, and links -- even if the tarball is stored on a drive that doesn't support those properties.
 
-Using compression can drastically shrink the file size, which is useful when archiving or transferring data across the Internet. Many applications (and source code) are distributed inside these archives.
+Tar doesn't automatically compress the archive file, but it does support it. Using compression can drastically shrink the file size, which is useful when archiving or transferring data across the Internet.
+
+Common compression methods include gz (GZip), bz2 (BZip2), or xz.
+
+Many applications (and source code) are distributed as tarballs.
 
 *Useful Flags:* 
 
@@ -813,11 +817,17 @@ Example:
 
 **Version control**
 
-Projects involving multiple authors often use a version control system to keep track of changes. The most common version control system at the moment is git.
+Projects involving multiple authors often use a version control system to keep track of changes.
+
+Development projects may still use version control even if they only involve one author, because it makes it much easier to recover when one of your edits (or more commonly, two of your edits in combination) break something.
+
+The most common distributed version control system on Linux is git, but Bazaar (bzr) and Mercurial (hg) have their proponents.
 
 **git**
 
 Git is a distributed version control and source code management system.
+
+Distributed VCS systems maintain a full copy of the repository on each user's machine, so developers with laptops can continue to work with the repository when they are offline. And a sysadmin isn't needed to manage a central version control server.
 
 *Useful Commands:*
 
@@ -853,13 +863,17 @@ Example:
 
 **Hardlink**
 
-A link (ln) or hard link is basically a reference to an inode address and a block of data on the disk. Most files will only ever have one, but there are instances when multiple can be useful. Every hard link that points to the same file can be read and written to, and modifies the same underlying data inside the file. The exception to this are permissions; each hard link can have distinct, separate permissions.
+A link (ln) or hard link is basically a reference to an inode address and a block of data on the disk.
 
-Hard links do not take up additional space in the filesystem, since they all point to the same data. This is contrary to making a copy of a file, which will take up twice the amount of space on the filesystem.  A file remains as long as there are at least one hard link pointing to it. Once the last hard link is deleted, the file is officially deleted and the space it previously consumed is freed.
+Most files will only ever have one, but there are instances when multiple hard links can be useful. Every hard link that points to the same file can be read and written to, and modifies the same underlying data inside the file. The exception to this are permissions; each hard link can have distinct, separate permissions.
+
+Hard links do not take up additional space in the filesystem, since they all point to the same data. This is very different from making a copy of a file, which will make a pair of files that collectively take up twice the amount of space on the filesystem.
+
+The actual blocks remain stored on the disk as long as there are at least one hard link pointing to them. Once the last hard link is deleted, the file is officially deleted and the space it previously consumed is freed.
 
 **Symlink**
 
-A symbolic link (ln -s) also referred to as a soft link, is similar to a shortcut in Windows. It points to the original location of a file, but if the destination file is moved or deleted, the link will be broken. A symlink can be deleted with no affect to the original file. Editing the data within the file from either the symlink or the file itself, will modify the original file.
+A symbolic link (ln -s), also referred to as a soft link, is similar to a shortcut in Windows. It points to the original location of a file, but if the destination file is moved or deleted, the link will be broken. A symlink can be deleted with no affect to the original file. Editing the data within the file from either the symlink or the file itself, will modify the original file.
 
 **find**
 
@@ -935,7 +949,7 @@ You can list all group members with getent, but it gives me other info as well, 
 
 **Checksums**
 
-A checksum (or hash sum) is a small snippet of text computed from an arbitrary block of data for the purpose of detecting accidental errors that may have been introduced during its transmission or storage. The integrity of the data can be checked at any later time by recomputing the checksum and comparing it with the stored one. If the checksums match, the data was almost certainly not altered.  Some popular hash algorithms include: MD5, cksum, SHA-1, SHA-256.
+A checksum (or hash sum) is a small snippet of text computed from an arbitrary block of data for the purpose of detecting accidental errors that may have been introduced during its transmission or storage. The integrity of the data can be checked at any later time by recomputing the checksum and comparing it with the stored one. If the checksums match, the data was almost certainly not altered.  Some popular hash algorithms include: MD5, CRC, SHA-1, SHA-256.
 
 MD5 is commonly used as it gives a good balance of performance (little time taken to generate a hash on large data) and collision resistance (likelihood that two different files will calculate to the same hash value). 
 
@@ -959,6 +973,8 @@ Notice, after moving the file, the hash sum is the same, because the contents ar
     1dcf0a9446176bee28ee29464400da86 foo.txt
 
 Just adding a single character to the beginning of the file causes the checksum to be drastically different, thus indicating a modification to the contents of file.
+
+Hashing functions are also used for storing passwords; but for a password hash, we actually want slow performance. This is because if someone grabs your password hash file, fast hashing means that they can brute-force your password much more quickly.
 
 <a name='unit6'></a>
 ## Unit 6: Advanced Process Management
